@@ -1,0 +1,13 @@
+{
+  "name": "backend-course-2025-3",
+  "version": "1.0.0",
+  "description": "Lab3 - JavaScript programming practice",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "keywords": [],
+  "author": "Роман Сухар",
+  "license": "",
+  "dependencies": {}
+}
