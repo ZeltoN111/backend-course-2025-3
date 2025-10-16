@@ -2,7 +2,6 @@ const fs = require('fs');
 const { Command } = require('commander');
 const program = new Command();
 
-// Налаштування параметрів командного рядка
 program
   .requiredOption('-i, --input <path>', 'path to input file')
   .option('-o, --output <path>', 'path to output file')
@@ -13,30 +12,28 @@ program
 program.parse(process.argv);
 const options = program.opts();
 
-// Перевірка обов'язкового параметра
+
 if (!options.input) {
   console.error('Please, specify input file');
   process.exit(1);
 }
 
-// Перевірка існування файлу
+
 if (!fs.existsSync(options.input)) {
   console.error('Cannot find input file');
   process.exit(1);
 }
 
-// Читання та парсинг NDJSON
 let data;
 try {
   const fileContent = fs.readFileSync(options.input, 'utf8');
   
-  // NDJSON формат - кожен рядок окремий JSON об'єкт
   const lines = fileContent.trim().split('\n');
   data = [];
   
   lines.forEach((line, index) => {
     const trimmedLine = line.trim();
-    if (trimmedLine === '') return; // пропускаємо порожні рядки
+    if (trimmedLine === '') return; 
     
     try {
       const parsed = JSON.parse(trimmedLine);
@@ -54,20 +51,15 @@ try {
   process.exit(1);
 }
 
-// Обробка даних
 let results = [];
 
 data.forEach(passenger => {
-  // Фільтрація: тільки ті, хто вижив (якщо параметр -s)
-  // Конвертуємо в число, бо може бути строка "1" або число 1
   if (options.survived && Number(passenger.Survived) !== 1) {
     return;
   }
 
-  // Формування рядка виводу
   let output = passenger.Name;
   
-  // Додаємо вік якщо параметр -a і Age не null
   if (options.age) {
     const age = passenger.Age;
     if (age !== null && age !== undefined && age !== 'null') {
@@ -75,7 +67,6 @@ data.forEach(passenger => {
     }
   }
   
-  // Додаємо номер квитка
   if (passenger.Ticket) {
     output += ' ' + passenger.Ticket;
   }
@@ -83,12 +74,9 @@ data.forEach(passenger => {
   results.push(output);
 });
 
-// Формування фінального результату
 const finalOutput = results.join('\n');
 
-// Вивід результатів
 if (!options.output && !options.display) {
-  // Якщо не задано жодного з необов'язкових параметрів - нічого не виводимо
   process.exit(0);
 }
 
